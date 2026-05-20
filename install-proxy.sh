@@ -25,9 +25,13 @@ ln -sf "get.sh" $bin/get_users
 ln -sf "rm.sh" $bin/remove_user
 ln -sf "new.sh" $bin/add_user
 
+read -p "ip adress to your endpoint" server_ip
+echo "now uuid will be generated via ssh to your server"
+read -p "do you have xray on server (y/n)" is_xray_on_different_server
+server_uuid=$(ssh root@$server_ip xray uuid)
 
-touch /usr/local/etx/xray/config.json
-cat <<EOF > test.sh
+#touch /usr/local/etc/xray/config.json
+cat <<EOF > config.json
 {
   "log": {
     "loglevel": "warning"
@@ -36,13 +40,13 @@ cat <<EOF > test.sh
   "inbounds": [
     {
       "listen": "0.0.0.0",
-      "port": 8443,
+      "port": 443,
       "protocol": "vless",
       "settings": {
         "clients": [
           {
-            "id": "CLIENT_UUID",
-            "email": "user"
+            "id": "$(xray uuid)",
+            "email": "init"
           }
         ],
         "decryption": "none"
@@ -55,8 +59,8 @@ cat <<EOF > test.sh
           "show": false,
           "dest": "yandex:443",
           "serverNames": ["yandex.ru"],
-          "privateKey": "RU_PRIVATE_KEY",
-          "shortIds": ["11aa22bb33"]
+          "privateKey": "$(cat /usr/local/etc/xray/.keys | awk -F': ' '/Password/ {print $2}')",
+          "shortIds": ["$(cat /usr/local/etc/xray/.keys | awk -F': ' '/shortsid/ {print $2}')"]
         }
       }
     }
@@ -69,11 +73,11 @@ cat <<EOF > test.sh
       "settings": {
         "vnext": [
           {
-            "address": "US_VPS_IP",
-            "port": 8443,
+            "address": "$server_ip",
+            "port": 443,
             "users": [
               {
-                "id": "US_UUID"
+                "id": "$server_uuid"
               }
             ]
           }
