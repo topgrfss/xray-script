@@ -21,6 +21,14 @@ xray x25519 >> /usr/local/etc/xray/.keys
 
 bin='/usr/local/bin/'
 
-mv get.sh $bin/get_users
-mv rm.sh $bin/remove_user
-mv new.sh $bin/add_user
+ln -sf "get.sh" $bin/get_users
+ln -sf "rm.sh" $bin/remove_user
+ln -sf "new.sh" $bin/add_user
+
+read -p "is it proxy or endpoint (1 or 2): " server
+
+
+touch /usr/local/etx/xray/config.json
+cat <<EOF > test.sh
+
+EOF
