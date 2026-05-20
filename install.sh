@@ -1,9 +1,7 @@
 #!/bin/bash
 
 apt update -y && apt upgrade -y
-apt install qrencode curl jq git -y
-
-git clone
+apt install qrencode curl jq -y
 
 bbr=$(sysctl -a | grep net.ipv4.tcp_congestion_control)
 if [ "$bbr" = "net.ipv4.tcp_congestion_control = bbr" ]; then
